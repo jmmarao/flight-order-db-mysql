@@ -1,0 +1,79 @@
+ALTER TABLE Usuario ADD gender char(1);
+ALTER TABLE Usuario MODIFY email  varchar(25) NOT NULL;
+ALTER TABLE Usuario CHANGE dataNascimento dataNasc date NOT NULL;
+ALTER TABLE Usuario DROP gender;
+
+ALTER TABLE Usuario_Midia ADD receberNotificacao char(1);
+ALTER TABLE Usuario_Midia MODIFY receberNotificacao bool;
+ALTER TABLE Usuario_Midia CHANGE receberNotificacao enviarNotificacao bool;
+ALTER TABLE Usuario_Midia DROP enviarNotificacao;
+
+ALTER TABLE Aeroporto ADD numeroDePistas int NOT NULL;
+ALTER TABLE Aeroporto MODIFY nome varchar(50) NOT NULL;
+ALTER TABLE Aeroporto CHANGE numeroDePistas qtdePista int NOT NULL;
+ALTER TABLE Aeroporto DROP qtdePista;
+
+ALTER TABLE Aviao ADD capacidadeBagagemMao int NOT NULL;
+ALTER TABLE Aviao MODIFY capacidadeBagagemMao decimal(4, 2) NOT NULL;
+ALTER TABLE Aviao CHANGE capacidadeBagagemMao bagagemMao decimal(4, 2);
+ALTER TABLE Aviao DROP bagagemMao;
+
+ALTER TABLE Categoria ADD  bagagemExtra bool;
+ALTER TABLE Categoria MODIFY descricao varchar(25);
+ALTER TABLE Categoria CHANGE valor taxaCategoria decimal(8, 2) NOT NULL;
+ALTER TABLE Categoria DROP bagagemExtra;
+
+ALTER TABLE Funcionario ADD gender char(1);
+ALTER TABLE Funcionario MODIFY nome varchar(60) NOT NULL;
+ALTER TABLE Funcionario CHANGE nome nomeCompleto varchar(60) NOT NULL;
+ALTER TABLE Funcionario DROP gender;
+
+ALTER TABLE Funcionario_Telefone ADD operadoraCelular varchar(20);
+ALTER TABLE Funcionario_Telefone MODIFY operadoraCelular varchar(15);
+ALTER TABLE Funcionario_Telefone CHANGE operadoraCelular operadora varchar(15);
+ALTER TABLE Funcionario_Telefone DROP operadora;
+
+ALTER TABLE Funcionario_Idioma ADD escolaParticular char(1);
+ALTER TABLE Funcionario_Idioma MODIFY escolaParticular bool;
+ALTER TABLE Funcionario_Idioma CHANGE escolaParticular aulaParticular bool;
+ALTER TABLE Funcionario_Idioma DROP aulaParticular;
+
+ALTER TABLE Piloto ADD gender bool;
+ALTER TABLE Piloto MODIFY gender char(1);
+ALTER TABLE Piloto CHANGE horasPilotadas hrPilotada int NOT NULL;
+ALTER TABLE Piloto DROP gender;
+
+ALTER TABLE Copiloto ADD fazVooInternacional bool NOT NULL;
+ALTER TABLE Copiloto MODIFY fazVooInternacional char(1) NOT NULL;
+ALTER TABLE Copiloto CHANGE horasAcompanhadas hrAcompanhada int NOT NULL;
+ALTER TABLE Copiloto DROP fazVooInternacional;
+
+ALTER TABLE Comissario ADD experienciaInternacional bool NOT NULL;
+ALTER TABLE Comissario MODIFY curso varchar(50);
+ALTER TABLE Comissario CHANGE experienciaInternacional expInternacional bool NOT NULL;
+ALTER TABLE Comissario DROP expInternacional;
+
+ALTER TABLE Assento ADD servicoMultimidia bool NOT NULL;
+ALTER TABLE Assento MODIFY servicoMultimidia  char(1) NOT NULL;
+ALTER TABLE Assento CHANGE servicoMultimidia possuiTv char(1) NOT NULL;
+ALTER TABLE Assento DROP possuiTv;
+
+ALTER TABLE Voo ADD internacional bool NOT NULL;
+ALTER TABLE Voo MODIFY origem varchar(50) NOT NULL;
+ALTER TABLE Voo CHANGE valor valorTotal decimal(8, 2) NOT NULL;
+ALTER TABLE Voo DROP internacional;
+
+ALTER TABLE Assistencia ADD tipoServico varchar(25) NOT NULL;
+ALTER TABLE Assistencia MODIFY tipoServico varchar(50) NOT NULL;
+ALTER TABLE Assistencia CHANGE tipoServico servicoPrestado varchar(50) NOT NULL;
+ALTER TABLE Assistencia DROP servicoPrestado;
+
+ALTER TABLE TRANSLADO ADD bagagemMao bool;
+ALTER TABLE TRANSLADO MODIFY bagagemMao char(1);
+ALTER TABLE TRANSLADO CHANGE bagagemMao possuiBagagem char(1);
+ALTER TABLE TRANSLADO DROP possuiBagagem;
+
+ALTER TABLE Compra ADD pacotePromocional char(1);
+ALTER TABLE Compra MODIFY pacotePromocional bool;
+ALTER TABLE Compra CHANGE pacotePromocional pctPromo bool;
+ALTER TABLE Compra DROP pctPromo;

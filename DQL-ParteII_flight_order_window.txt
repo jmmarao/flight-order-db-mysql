@@ -1,0 +1,58 @@
+//==============================================================================================================================
+//Query Padrão
+SELECT ...
+FROM ...
+WHERE ...
+(GROUP BY) ...
+(HAVING) ...
+(ORDER BY) atributo DESC; //função opcional para ordenar do maior para o menor (ASC é o padrão)
+
+//==============================================================================================================================
+
+SELECT v.siglaAeroporto, v.origem, v.numeroVoo, v.codigoAviao
+FROM voo v
+WHERE v.numeroVoo NOT IN (SELECT numeroVoo FROM translado);
+
+SELECT u.primeiroNome, u.sobrenome, u.email, u.classeAerea, u.milhas
+FROM usuario u
+WHERE EXISTS (SELECT * FROM usuario_midia midia WHERE midia.midia = "email" AND midia.cpf = u.cpf);
+
+SELECT f.cpf, f.nome, p.horasPilotadas, f.dataAdmissao
+FROM funcionario f, piloto p
+WHERE f.cpf = p.cpf AND NOT EXISTS (SELECT v.cpfPiloto FROM voo v WHERE p.cpf = v.cpfPiloto);
+
+SELECT u.cpf, u.primeiroNome, c.numeroVoo, c.siglaAeroporto
+FROM usuario u, compra c
+WHERE u.cpf = c.cpfUsuario AND u.classeAerea = "Primeira Classe" AND 
+c.pontos > ANY (SELECT c.pontos FROM compra c WHERE c.pontos > 100);
+
+SELECT u.cpf, u.sobrenome, u.milhas, c.numeroVoo, c.siglaAeroporto
+FROM usuario u, compra c
+WHERE c.cpfUsuario = u.cpf AND c.cpfUsuario = SOME(SELECT cpf FROM usuario_midia WHERE midia = "Instagram”);
+
+SELECT c.cpf, f.nome, v.numeroVoo, v.codigoAviao, v.siglaAeroporto, v.origem, c.horasAcompanhadas
+FROM funcionario f, copiloto c, voo v
+WHERE f.cpf = c.cpf AND v.cpfCopiloto = c.cpf AND 
+c.horasAcompanhadas > ALL (SELECT horasPilotadas FROM piloto WHERE horasPilotadas < 300);
+
+SELECT f.nome, f.cpf, idioma.idioma
+FROM funcionario f JOIN funcionario_idioma idioma
+ON f.cpf = idioma.cpf;
+
+SELECT a.codigoAviao, a.numeroAssento, a.posicao, a.codigoCategoria, c.descricao, c.valor
+FROM assento a LEFT JOIN categoria c
+ON a.codigoCategoria = c.codigo
+ORDER BY c.codigo;
+
+SELECT v.numeroVoo, v.codigoAviao, v.siglaAeroporto, v.origem, t.numeroTicket, t.partida, t.chegada
+FROM translado t RIGHT JOIN voo v
+ON v.numeroVoo = t.numeroVoo AND v.codigoAviao = t.codigoAviao AND v.siglaAeroporto = t.siglaAeroporto
+ORDER BY t.numeroTicket;
+
+SELECT u.cpf, u.sobrenome, u.email, u.classeAerea, midia.midia
+FROM usuario u LEFT JOIN usuario_midia midia
+ON u.cpf = midia.cpf
+UNION
+SELECT u.cpf, u.sobrenome, u.email, u.classeAerea, midia.midia
+FROM usuario u RIGHT JOIN usuario_midia midia
+ON u.cpf = midia.cpf;

@@ -1,0 +1,90 @@
+SELECT DISTINCT categoria.descricao
+FROM categoria, assento
+WHERE assento.codigoCategoria = categoria.codigo;
+
+SELECT func.cpf, func.nome, func_idioma.idioma
+FROM funcionario func, funcionario_idioma func_idioma
+WHERE func.cpf = func_idioma.cpf AND idioma = "espanhol";
+
+SELECT c.cpf, f.nome, c.curso
+FROM comissario c, funcionario f
+WHERE (f.cpf = c.cpf) AND (c.curso = "Primeiros socorros" OR c.curso = "Air service");
+
+SELECT usuario.cpf, usuario.primeiroNome, usuario.milhas, compra.pontos
+FROM usuario, compra
+WHERE usuario.cpf = compra.cpfUsuario AND compra.pontos > 100;
+
+SELECT f.cpf, f.nome, f.dataAdmissao, c.horasAcompanhadas
+FROM funcionario f, copiloto c
+WHERE f.cpf = c.cpf AND c.horasAcompanhadas < 250;
+
+SELECT v.numeroVoo, v.siglaAeroporto, a.nome, v.origem
+FROM aeroporto a, voo v
+WHERE (a.sigla = v.siglaAeroporto) AND (v.siglaAeroporto LIKE 'E%');
+
+SELECT f.cpf, f.nome, p.horasPilotadas
+FROM funcionario f, piloto p
+WHERE f.cpf = p.cpf AND (p.horasPilotadas BETWEEN 200 AND 300);
+
+SELECT MAX(c.pontos) AS Pont_Maxima, u.cpf, u.primeiroNome, u.email, c.pontos, c.identificador
+FROM usuario u, compra c
+WHERE u.cpf = c.cpfUsuario AND c.pontos = (SELECT MAX(pontos) FROM compra);
+
+SELECT f.cpf, f.nome, f.dataAdmissao, MIN(c.horasAcompanhadas) AS Horas_min
+FROM funcionario f, copiloto c
+WHERE f.cpf = c.cpf AND c.horasAcompanhadas = (SELECT MIN(horasAcompanhadas) FROM copiloto);
+
+SELECT midia.midia, AVG(voo.valor) AS Custo_médio_por_classe_aerea
+FROM usuario, voo, compra, usuario_midia midia
+WHERE usuario.cpf = compra.cpfUsuario AND compra.numeroVoo = voo.numeroVoo AND usuario.cpf = midia.cpf
+GROUP BY midia.midia
+ORDER BY AVG(voo.valor);
+
+SELECT SUM(usuario.milhas) AS Milhas_aniversariantes_maio, SUM(compra.pontos) AS Pontos_adquridos_aniversariantes_maio
+FROM usuario, compra
+WHERE usuario.cpf = compra.cpfUsuario AND dataNascimento LIKE '%-05-%';
+
+SELECT COUNT(f.cpf) AS Pilotos_contratados_2020
+FROM funcionario f, piloto p
+WHERE f.cpf = p.cpf AND dataAdmissao LIKE "2020%";
+
+SELECT COUNT(cpf)
+FROM funcionario
+WHERE dataAdmissao LIKE "2020%";
+
+SELECT p.cpf, p.horasPilotadas, v.numeroVoo, v.codigoAviao, v.origem
+FROM voo v, piloto p
+WHERE v.cpfPiloto = p.cpf AND v.origem IN ("Madrid", "Londres", "Dubai");
+
+SELECT a.cpfComissario, c.curso , a.numeroVoo, a.codigoAviao, a.siglaAeroporto
+FROM assistencia a, comissario c
+WHERE a.cpfComissario = c.cpf AND c.curso NOT IN (SELECT c.curso FROM comissario c WHERE c.curso = "Primeiros socorros");
+
+SELECT u.cpf, u.primeiroNome, u.classeAerea, u.milhas, c.pontos, c.siglaAeroporto, c.identificador
+FROM usuario u, compra c
+WHERE u.cpf = c.cpfUsuario AND u.milhas IS NULL;
+
+SELECT a.numeroVoo, a.siglaAeroporto, c.cpf, f.nome, c.curso
+FROM assistencia a, comissario c, funcionario f
+WHERE a.cpfComissario = c.cpf AND c.cpf = f.cpf AND c.curso IS NOT NULL;
+
+SELECT u.cpf, u.primeiroNome, COALESCE (u.milhas, "Não informado"), c.numeroVoo, c.siglaAeroporto, c.pontos, c.dataHorarioVoo, v.valor
+FROM usuario u, compra c, voo v
+WHERE u.cpf = c.cpfUsuario AND c.numeroVoo = v.numeroVoo;
+
+SELECT midia.midia , COUNT(midia.midia) AS Rank_mídias
+FROM usuario u, usuario_midia midia
+WHERE u.cpf = midia.cpf
+GROUP BY midia.midia;
+
+SELECT usuario.classeAerea, AVG(voo.valor) AS Custo_médio_por_classe_aerea
+FROM usuario, voo, compra
+WHERE usuario.cpf = compra.cpfUsuario AND compra.numeroVoo = voo.numeroVoo
+GROUP BY usuario.classeAerea
+HAVING AVG(voo.valor) > 2100
+ORDER BY AVG(voo.valor);
+
+SELECT u.primeiroNome, u.cpf, u.classeAerea, v.valor, v.siglaAeroporto, v.origem
+FROM usuario u, compra c, voo v
+WHERE u.cpf = c.cpfUsuario AND c.numeroVoo = v.numeroVoo
+ORDER BY v.valor DESC; 

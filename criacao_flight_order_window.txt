@@ -1,0 +1,148 @@
+CREATE DATABASE flight_order_window;
+
+USE flight_order_window;
+
+CREATE TABLE Usuario(
+	cpf varchar(14),
+	primeiroNome varchar(20) NOT NULL,
+	nomeMeio varchar(20),
+	sobrenome varchar(20) NOT NULL,
+	dataNascimento date NOT NULL,
+	email varchar(50) NOT NULL UNIQUE,
+	classeAerea varchar(15),
+	milhas int,
+	PRIMARY KEY (cpf),
+	CONSTRAINT classeAereaCheck CHECK (classeAerea in ('Economica', 'Executiva', 'Primeira Classe'))
+);
+
+CREATE TABLE Usuario_Midia(
+	cpf varchar(14),
+	midia varchar(9),
+	PRIMARY KEY(cpf, midia),
+	FOREIGN KEY (cpf) references Usuario(cpf),
+	CONSTRAINT midiaCheck CHECK (midia in ('Facebook', 'Instagram', 'Email'))
+);
+
+CREATE TABLE Aeroporto(
+	sigla varchar(5),
+	nome varchar(25) NOT NULL UNIQUE,
+	PRIMARY KEY(sigla)
+);
+
+CREATE TABLE Aviao(
+	codigo int,
+	PRIMARY KEY(codigo)
+);
+
+CREATE TABLE Categoria(
+	codigo int,
+	descricao varchar(50),
+	valor decimal(8, 2) NOT NULL,
+	PRIMARY KEY(codigo)
+);
+
+CREATE TABLE Funcionario(
+	cpf varchar(14),
+	nome varchar(50) NOT NULL,
+	dataNascimento date NOT NULL,
+	dataAdmissao date NOT NULL,
+	logradouro varchar(50) NOT NULL,
+	nroResidencial int NOT NULL,
+	cep varchar(8) NOT NULL,
+	PRIMARY KEY (cpf)
+);
+
+CREATE TABLE Funcionario_Telefone(
+	cpf varchar(14),
+	telefone varchar(9) UNIQUE,
+	PRIMARY KEY (cpf, telefone),
+	FOREIGN KEY (cpf) references Funcionario(cpf)
+);
+
+CREATE TABLE Funcionario_Idioma(
+	cpf varchar(14),
+	idioma varchar(12),
+	PRIMARY KEY (cpf, idioma),
+	FOREIGN KEY (cpf) references Funcionario(cpf)
+);
+
+CREATE TABLE Piloto(
+	cpf varchar(14),
+	horasPilotadas int NOT NULL,
+	PRIMARY KEY (cpf),
+	FOREIGN KEY (cpf) references Funcionario(cpf)
+);
+
+CREATE TABLE Copiloto(
+	cpf varchar(14),
+	horasAcompanhadas int NOT NULL,
+	PRIMARY KEY (cpf),
+	FOREIGN KEY (cpf) references Funcionario(cpf)
+);
+
+CREATE TABLE Comissario(
+	cpf varchar(14),
+	curso varchar(25),
+	PRIMARY KEY (cpf),
+	FOREIGN KEY (cpf) references Funcionario(cpf)
+);
+
+CREATE TABLE Assento(
+	codigoAviao int,
+	numeroAssento int NOT NULL,
+	codigoCategoria int,
+	posicao int NOT NULL,
+	PRIMARY KEY (codigoAviao, numeroAssento),
+	FOREIGN KEY (codigoAviao) references Aviao(codigo),
+	FOREIGN KEY (codigoCategoria) references Categoria(codigo)
+);
+
+CREATE TABLE Voo(
+	numeroVoo int,
+	codigoAviao int,
+	siglaAeroporto varchar(5),
+	valor decimal(8, 2) NOT NULL,
+	origem varchar(25) NOT NULL,
+	cpfPiloto varchar(14),
+	cpfCopiloto varchar(14),
+	PRIMARY KEY(numeroVoo, codigoAviao, siglaAeroporto),
+	FOREIGN KEY (codigoAviao) references Aviao(codigo),
+	FOREIGN KEY (siglaAeroporto) references Aeroporto(sigla),
+	FOREIGN KEY (cpfPiloto) references Piloto(cpf),
+	FOREIGN KEY (cpfCopiloto) references Copiloto(cpf)
+);
+
+CREATE TABLE Assistencia(
+	numeroVoo int,
+	codigoAviao int,
+	siglaAeroporto varchar(5),
+	cpfComissario varchar(14),
+	PRIMARY KEY(numeroVoo, codigoAviao, siglaAeroporto, cpfComissario),
+	CONSTRAINT assistencia_voo_FK FOREIGN KEY (numeroVoo, codigoAviao, siglaAeroporto) REFERENCES Voo(numeroVoo, codigoAviao, siglaAeroporto),
+	FOREIGN KEY (cpfComissario) references Comissario(cpf)
+);
+
+CREATE TABLE Translado(
+	numeroTicket int,
+	partida datetime,
+	chegada datetime,
+	poltrona int,
+	numeroVoo int,
+	codigoAviao int,
+	siglaAeroporto varchar(5),
+	PRIMARY KEY (numeroTicket),
+	CONSTRAINT translado_voo_FK FOREIGN KEY (numeroVoo, codigoAviao, siglaAeroporto) REFERENCES Voo(numeroVoo, codigoAviao, siglaAeroporto)
+);
+
+CREATE TABLE Compra(
+	identificador int,
+	cpfUsuario varchar(14),
+	numeroVoo int,
+	codigoAviao int,
+	siglaAeroporto varchar(5),
+	pontos int NOT NULL,
+	dataHorarioVoo dateTIME NOT NULL,
+	PRIMARY KEY (identificador, cpfUsuario, numeroVoo, codigoAviao, siglaAeroporto),
+	FOREIGN KEY (cpfUsuario) references Usuario(cpf),
+	CONSTRAINT compra_voo_FK FOREIGN KEY (numeroVoo, codigoAviao, siglaAeroporto) REFERENCES Voo(numeroVoo, codigoAviao, siglaAeroporto)
+);
